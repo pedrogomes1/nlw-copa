@@ -26,7 +26,7 @@ export default function Home({
     event.preventDefault();
 
     try {
-      const response = await api.post("/pools", {
+      const response = await api.post<{ code: string }>("/pools", {
         title: poolTitle,
       });
 
@@ -118,6 +118,7 @@ export default function Home({
       <Image
         src={appPreviewImg}
         alt="Dois celulares exibindo uma prévia da aplicação móvel da NLW Copa"
+        quality={100}
       />
     </div>
   );
@@ -126,9 +127,9 @@ export default function Home({
 export const getStaticProps: GetStaticProps = async () => {
   const [poolCountResponse, guessesCountResponse, userCountResponse] =
     await Promise.all([
-      api.get("pools/count"),
-      api.get("guesses/count"),
-      api.get("users/count"),
+      api.get<{ count: number }>("pools/count"),
+      api.get<{ count: number }>("guesses/count"),
+      api.get<{ count: number }>("users/count"),
     ]);
 
   return {
