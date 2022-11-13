@@ -1,10 +1,13 @@
+import { FormEvent, useState } from "react";
+import { GetStaticProps } from "next";
 import Image from "next/image";
+
+import { api } from "../lib/axios";
+
 import logoImg from "../assets/logo.svg";
 import appPreviewImg from "../assets/mobiles.png";
 import iconCheck from "../assets/icon-check.svg";
 import userAvatarExampleImg from "../assets/users-avatar-example.png";
-import { GetServerSideProps } from "next";
-import { api } from "../lib/axios";
 
 interface HomeProps {
   poolCount: number;
@@ -17,6 +20,30 @@ export default function Home({
   guessesCount,
   userCount,
 }: HomeProps) {
+  const [poolTitle, setPoolTitle] = useState("");
+
+  async function handleCreatePool(event: FormEvent) {
+    event.preventDefault();
+
+    try {
+      const response = await api.post("/pools", {
+        title: poolTitle,
+      });
+
+      const { code } = response.data;
+
+      await navigator.clipboard.writeText(code);
+
+      alert(
+        "Bolão criado com sucesso, o código foi copiado para a área de transferência!"
+      );
+
+      setPoolTitle("");
+    } catch (error) {
+      alert("Falha ao criar o bolão, tente novamente!");
+    }
+  }
+
   return (
     <div className="max-w-[1124px] mx-auto h-screen grid gap-28 grid-cols-2 items-center">
       <main>
@@ -36,12 +63,17 @@ export default function Home({
             estão usando
           </strong>
         </div>
-        <form className="mt-10 flex gap-2">
+        <form
+          onSubmit={handleCreatePool}
+          className="mt-10 flex gap-2 text-gray-100"
+        >
           <input
-            className="flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-sm"
-            type="text"
             required
+            type="text"
             placeholder="Qual nome do seu bolão?"
+            className="flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-sm"
+            onChange={(event) => setPoolTitle(event.target.value)}
+            value={poolTitle}
           />
           <button
             className="bg-yellow-500 px-6 py-4 rounded text-gray-900 font-bold text-sm uppercase hover:bg-yellow-700"
@@ -91,7 +123,7 @@ export default function Home({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const [poolCountResponse, guessesCountResponse, userCountResponse] =
     await Promise.all([
       api.get("pools/count"),
@@ -105,5 +137,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
       guessesCount: guessesCountResponse.data.count,
       userCount: userCountResponse.data.count,
     },
+    revalidate: 10,
   };
 };
