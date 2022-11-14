@@ -48,7 +48,7 @@ export async function poolRoutes(fastify: FastifyInstance) {
   });
 
   fastify.post(
-    "/pools/:id/join",
+    "/pools/join",
     { onRequest: [authenticate] },
     async (request, reply) => {
       const joinPoolBody = z.object({
