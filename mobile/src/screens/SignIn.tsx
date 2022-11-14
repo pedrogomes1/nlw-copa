@@ -3,8 +3,10 @@ import { Fontisto } from "@expo/vector-icons";
 
 import Logo from "../assets/logo.svg";
 import { Button } from "../components/Button";
+import { useAuth } from "../hooks/useAuth";
 
 export function SignIn() {
+  const { signIn } = useAuth();
   return (
     <Center flex={1} bgColor="gray.900" p={8}>
       <Logo width={212} height={40} />
@@ -12,6 +14,7 @@ export function SignIn() {
       <Button
         title="ENTRAR COM GOOGLE"
         type="SECONDARY"
+        onPress={signIn}
         mt={12}
         leftIcon={<Icon as={Fontisto} name="google" color="white" size="md" />}
       />
