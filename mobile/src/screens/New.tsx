@@ -1,11 +1,10 @@
 import { Heading, VStack, Text } from "native-base";
+
 import { Header } from "../components/Header";
 import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 
 import Logo from "../assets/logo.svg";
-
-import { useAuth } from "../hooks/useAuth";
-import { Button } from "../components/Button";
 
 export function New() {
   return (
